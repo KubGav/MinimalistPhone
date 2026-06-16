@@ -1,10 +1,7 @@
 package com.myapplication
 
-package com.example.minimalistlauncher
-
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -15,7 +12,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Text
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,7 +37,6 @@ class MainActivity : ComponentActivity() {
 fun MinimalistApp() {
     var showAppDrawer by remember { mutableStateOf(false) }
     
-    // Zabrání zavření launcheru tlačítkem zpět, místo toho zavře jen seznam aplikací
     BackHandler(enabled = showAppDrawer) {
         showAppDrawer = false
     }
@@ -65,28 +61,23 @@ fun HomeScreen(onOpenDrawer: () -> Unit) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.Start
     ) {
-        // Hodiny
         Text(text = time.value, color = Color.White, fontSize = 64.sp, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(48.dp))
 
-        // Volání
         AppItem("Telefon") {
             launchApp(context, "com.android.dialer") ?: launchApp(context, "com.google.android.dialer")
         }
         
-        // SMS
         AppItem("Zprávy") {
             launchApp(context, "com.android.messaging") ?: launchApp(context, "com.google.android.apps.messaging")
         }
         
-        // Google
         AppItem("Google") {
             launchApp(context, "com.android.chrome")
         }
 
         Spacer(modifier = Modifier.weight(1f))
 
-        // Tlačítko pro všechny aplikace
         Text(
             text = "Všechny aplikace →",
             color = Color.Gray,
@@ -149,7 +140,6 @@ fun AppItem(label: String, onClick: () -> Unit) {
     )
 }
 
-// Pomocná funkce pro vyhledání všech spustitelných aplikací
 fun getInstalledApps(context: Context): List<ResolveInfo> {
     val intent = Intent(Intent.ACTION_MAIN, null).apply {
         addCategory(Intent.CATEGORY_LAUNCHER)
@@ -158,7 +148,6 @@ fun getInstalledApps(context: Context): List<ResolveInfo> {
         .sortedBy { it.loadLabel(context.packageManager).toString().lowercase() }
 }
 
-// Pomocná funkce pro spuštění aplikace podle balíčku
 fun launchApp(context: Context, packageName: String): Unit? {
     val intent = context.packageManager.getLaunchIntentForPackage(packageName)
     return intent?.let {
